@@ -58,8 +58,6 @@ void Asteroids::Start()
 	Animation *asteroid1_anim = AnimationManager::GetInstance().CreateAnimationFromFile("asteroid1", 128, 8192, 128, 128, "asteroid1_fs.png");
 	Animation *spaceship_anim = AnimationManager::GetInstance().CreateAnimationFromFile("spaceship", 128, 128, 128, 128, "spaceship_fs.png");
 
-	// Create a spaceship and add it to the world
-	mGameWorld->AddObject(CreateSpaceship());
 	// Create some asteroids and add them to the world
 	CreateAsteroids(10);
 
