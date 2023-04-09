@@ -97,6 +97,8 @@ void Asteroids::OnKeyPressed(uchar key, int x, int y)
 		}
 		if (start == 0 && demo == 0)
 		{
+			mDemoModeLabel->SetVisible(false);
+
 			mGameWorld->AddObject(CreateSpaceship());
 			SetTimer(200, DEMO_MODE);
 			demo = 1;
@@ -107,11 +109,13 @@ void Asteroids::OnKeyPressed(uchar key, int x, int y)
 		{
 			mGameTitleLabel->SetVisible(false);
 			mStartScreenLabel->SetVisible(false);
+			mDemoModeLabel->SetVisible(false);
 			mScoreLabel->SetVisible(true);
 			mHighScoreLabel->SetVisible(true);
 			mLivesLabel->SetVisible(true);
 
-			mGameWorld->AddObject(CreateSpaceship());
+			mSpaceship->Reset();
+			mGameWorld->AddObject(mSpaceship);
 			CreateAsteroids(10);
 
 			start = 1;
@@ -328,6 +332,19 @@ void Asteroids::CreateGUI()
 	shared_ptr<GUIComponent> start_screen_component
 		= static_pointer_cast<GUIComponent>(mStartScreenLabel);
 	mGameDisplay->GetContainer()->AddComponent(start_screen_component, GLVector2f(0.5f, 0.5f));
+
+	// Create a new GUILabel and wrap it up in a shared_ptr
+	mDemoModeLabel = shared_ptr<GUILabel>(new GUILabel("Press 'Space' for demo mode"));
+	// Set the horizontal alignment of the label to GUI_HALIGN_CENTER
+	mDemoModeLabel->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
+	// Set the vertical alignment of the label to GUI_VALIGN_MIDDLE
+	mDemoModeLabel->SetVerticalAlignment(GUIComponent::GUI_VALIGN_MIDDLE);
+	// Set the visibility of the label to true (visible)
+	mDemoModeLabel->SetVisible(true);
+	// Add the GUILabel to the GUIContainer  
+	shared_ptr<GUIComponent> demo_mode_component
+		= static_pointer_cast<GUIComponent>(mDemoModeLabel);
+	mGameDisplay->GetContainer()->AddComponent(demo_mode_component, GLVector2f(0.5f, 0.4f));
 }
 
 int highScore;
