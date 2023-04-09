@@ -58,11 +58,12 @@ void Asteroids::Start()
 	Animation *asteroid1_anim = AnimationManager::GetInstance().CreateAnimationFromFile("asteroid1", 128, 8192, 128, 128, "asteroid1_fs.png");
 	Animation *spaceship_anim = AnimationManager::GetInstance().CreateAnimationFromFile("spaceship", 128, 128, 128, 128, "spaceship_fs.png");
 
-	// Create some asteroids and add them to the world
-	CreateAsteroids(10);
-
 	//Create the GUI
 	CreateGUI();
+
+	// Hide GUI elements for start screen
+	mLivesLabel->SetVisible(false);
+	mScoreLabel->SetVisible(false);
 
 	// Add a player (watcher) to the game world
 	mGameWorld->AddListener(&mPlayer);
@@ -94,8 +95,14 @@ void Asteroids::OnKeyPressed(uchar key, int x, int y)
 	case '\r': // '\r' represents the Enter key
 		if (start == 0)
 		{
+			mGameTitleLabel->SetVisible(false);
 			mStartScreenLabel->SetVisible(false);
+			mScoreLabel->SetVisible(true);
+			mLivesLabel->SetVisible(true);
+
 			mGameWorld->AddObject(CreateSpaceship());
+			CreateAsteroids(10);
+
 			start = 1;
 		}
 		break;
@@ -219,6 +226,19 @@ void Asteroids::CreateAsteroids(const uint num_asteroids)
 
 void Asteroids::CreateGUI()
 {
+	// Create a new GUILabel and wrap it up in a shared_ptr
+	mGameTitleLabel = shared_ptr<GUILabel>(new GUILabel("Asteroids"));
+	// Set the horizontal alignment of the label to GUI_HALIGN_CENTER
+	mGameTitleLabel->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
+	// Set the vertical alignment of the label to GUI_VALIGN_MIDDLE
+	mGameTitleLabel->SetVerticalAlignment(GUIComponent::GUI_VALIGN_MIDDLE);
+	// Set the visibility of the label to true (visible)
+	mGameTitleLabel->SetVisible(true);
+	// Add the GUILabel to the GUIContainer  
+	shared_ptr<GUIComponent> game_title_component
+		= static_pointer_cast<GUIComponent>(mGameTitleLabel);
+	mGameDisplay->GetContainer()->AddComponent(game_title_component, GLVector2f(0.5f, 0.75f));
+
 	// Add a (transparent) border around the edge of the game display
 	mGameDisplay->GetContainer()->SetBorder(GLVector2i(10, 10));
 	// Create a new GUILabel and wrap it up in a shared_ptr

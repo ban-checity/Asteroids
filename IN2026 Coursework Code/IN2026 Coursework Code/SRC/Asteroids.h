@@ -49,11 +49,12 @@ public:
 
 private:
 	shared_ptr<Spaceship> mSpaceship;
+	shared_ptr<GUILabel> mGameTitleLabel;
 	shared_ptr<GUILabel> mScoreLabel;
 	shared_ptr<GUILabel> mLivesLabel;
 	shared_ptr<GUILabel> mGameOverLabel;
 	shared_ptr<GUILabel> mStartScreenLabel;
-
+	
 	uint mLevel;
 	uint mAsteroidCount;
 
