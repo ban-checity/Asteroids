@@ -296,14 +296,49 @@ void Asteroids::CreateGUI()
 	mGameDisplay->GetContainer()->AddComponent(start_screen_component, GLVector2f(0.5f, 0.5f));
 }
 
+int highScore;
 void Asteroids::OnScoreChanged(int score)
 {
 	// Format the score message using an string-based stream
 	std::ostringstream msg_stream;
 	msg_stream << "Score: " << score;
+
 	// Get the score message as a string
 	std::string score_msg = msg_stream.str();
 	mScoreLabel->SetText(score_msg);
+
+	// Checks if there is an existing high score
+	std::ifstream file("highscore.txt");
+	if (file.is_open()) {
+		file >> highScore;
+		file.close();
+	}
+
+	// Check if current score is greater than high score
+	if (score > highScore)
+	{
+		// Update high score in the file
+		std::ofstream outfile("highscore.txt");
+		outfile << score;
+		outfile.close();
+
+		// Update current high score in-game
+		std::ostringstream msg_stream;
+		msg_stream << "High Score: " << score;
+		std::string high_score_msg = msg_stream.str();
+		mHighScoreLabel->SetText(high_score_msg);
+
+		// Update high score
+		highScore = score;
+	}
+	else
+	{
+		// Update current high score in-game with the high score from file
+		std::ostringstream msg_stream;
+		msg_stream << "High Score: " << highScore;
+		std::string high_score_msg = msg_stream.str();
+		mHighScoreLabel->SetText(high_score_msg);
+	}
 }
 
 void Asteroids::OnPlayerKilled(int lives_left)
