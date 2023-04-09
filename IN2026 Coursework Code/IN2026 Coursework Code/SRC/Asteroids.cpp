@@ -61,6 +61,8 @@ void Asteroids::Start()
 	//Create the GUI
 	CreateGUI();
 
+	mGameWorld->AddObject(CreateAISpaceship());
+
 	// Hide GUI elements for start screen
 	mLivesLabel->SetVisible(false);
 	mScoreLabel->SetVisible(false);
@@ -84,14 +86,23 @@ void Asteroids::Stop()
 }
 
 // PUBLIC INSTANCE METHODS IMPLEMENTING IKeyboardListener /////////////////////
-// This variable is required so that the spaceship doesn't duplicate
-int start = 0;
+int start = 0;	// Required so that the spaceship doesn't duplicate
+int demo = 0;	// Required so that the demo doesn't duplicate
 void Asteroids::OnKeyPressed(uchar key, int x, int y)
 {
 	switch (key)
 	{
 	case ' ':
-		mSpaceship->Shoot();
+		if (start == 1)
+		{
+			mSpaceship->Shoot();
+		}
+		if (start == 0 && demo == 0)
+		{
+			mGameWorld->AddObject(CreateSpaceship());
+			SetTimer(200, DEMO_MODE);
+			demo = 1;
+		}
 		break;
 	case '\r': // '\r' represents the Enter key
 		if (start == 0)
@@ -117,6 +128,7 @@ void Asteroids::OnKeyReleased(uchar key, int x, int y) {}
 
 void Asteroids::OnSpecialKeyPressed(int key, int x, int y)
 {
+
 	switch (key)
 	{
 	// If up arrow key is pressed start applying forward thrust
@@ -132,17 +144,21 @@ void Asteroids::OnSpecialKeyPressed(int key, int x, int y)
 
 void Asteroids::OnSpecialKeyReleased(int key, int x, int y)
 {
-	switch (key)
-	{
-	// If up arrow key is released stop applying forward thrust
-	case GLUT_KEY_UP: mSpaceship->Thrust(0); break;
-	// If left arrow key is released stop rotating
-	case GLUT_KEY_LEFT: mSpaceship->Rotate(0); break;
-	// If right arrow key is released stop rotating
-	case GLUT_KEY_RIGHT: mSpaceship->Rotate(0); break;
-	// Default case - do nothing
-	default: break;
-	} 
+	// The spaceship can only be controlled when the player starts the game
+	// This is so that the spaceship doesn't move when the player is in demo mode
+	if (start == 1) {
+		switch (key)
+		{
+			// If up arrow key is released stop applying forward thrust
+		case GLUT_KEY_UP: mSpaceship->Thrust(0); break;
+			// If left arrow key is released stop rotating
+		case GLUT_KEY_LEFT: mSpaceship->Rotate(0); break;
+			// If right arrow key is released stop rotating
+		case GLUT_KEY_RIGHT: mSpaceship->Rotate(0); break;
+			// Default case - do nothing
+		default: break;
+		}
+	}
 }
 
 
@@ -186,6 +202,27 @@ void Asteroids::OnTimer(int value)
 		mGameOverLabel->SetVisible(true);
 	}
 
+	if (start == 0) { // When the player launches the game
+		if (value == DEMO_MODE) {
+			int i = (rand() % 4); // generate a random number between 0 and 3
+			switch (i) {
+			case 0: // move up
+				mSpaceship->Thrust(10);
+				break;
+			case 1: // move down
+				mSpaceship->Thrust(-10);
+				break;
+			case 2: // rotate left
+				mSpaceship->Rotate(90);
+				break;
+			case 3: // rotate right
+				mSpaceship->Rotate(-90);
+				break;
+			}
+			mSpaceship->Shoot(); // always shoot when in demo mode
+			SetTimer(250, DEMO_MODE);
+		}
+	}
 }
 
 // PROTECTED INSTANCE METHODS /////////////////////////////////////////////////
@@ -206,24 +243,6 @@ shared_ptr<GameObject> Asteroids::CreateSpaceship()
 	mSpaceship->Reset();
 	// Return the spaceship so it can be added to the world
 	return mSpaceship;
-
-}
-
-shared_ptr<GameObject> Asteroids::CreateAISpaceship()
-{
-	mAISpaceship = make_shared<Spaceship>();
-	mAISpaceship->SetBoundingShape(make_shared<BoundingSphere>(mAISpaceship->GetThisPtr(), 4.0f));
-	shared_ptr<Shape> bullet_shape = make_shared<Shape>("bullet.shape");
-	mAISpaceship->SetBulletShape(bullet_shape);
-	Animation* anim_ptr = AnimationManager::GetInstance().GetAnimationByName("spaceship");
-	shared_ptr<Sprite> spaceship_sprite =
-		make_shared<Sprite>(anim_ptr->GetWidth(), anim_ptr->GetHeight(), anim_ptr);
-	mAISpaceship->SetSprite(spaceship_sprite);
-	mAISpaceship->SetScale(0.1f);
-	// Reset spaceship back to centre of the world
-	mAISpaceship->Reset();
-	// Return the spaceship so it can be added to the world
-	return mAISpaceship;
 }
 
 void Asteroids::CreateAsteroids(const uint num_asteroids)
