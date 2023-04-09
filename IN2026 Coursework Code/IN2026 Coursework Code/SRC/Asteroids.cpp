@@ -100,6 +100,7 @@ void Asteroids::OnKeyPressed(uchar key, int x, int y)
 			mStartScreenLabel->SetVisible(false);
 			start = 1;
 		}
+		break;
 	default:
 		break;
 	}
