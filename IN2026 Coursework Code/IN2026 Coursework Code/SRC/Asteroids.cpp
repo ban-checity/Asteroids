@@ -84,7 +84,8 @@ void Asteroids::Stop()
 }
 
 // PUBLIC INSTANCE METHODS IMPLEMENTING IKeyboardListener /////////////////////
-
+// This variable is required so that the spaceship doesn't duplicate in 'OnKeyPressed'
+int start = 0;
 void Asteroids::OnKeyPressed(uchar key, int x, int y)
 {
 	switch (key)
@@ -92,6 +93,13 @@ void Asteroids::OnKeyPressed(uchar key, int x, int y)
 	case ' ':
 		mSpaceship->Shoot();
 		break;
+	case 'p':
+		if (start == 0)
+		{
+			mGameWorld->AddObject(CreateSpaceship());
+			mStartScreenLabel->SetVisible(false);
+			start = 1;
+		}
 	default:
 		break;
 	}
@@ -244,6 +252,18 @@ void Asteroids::CreateGUI()
 		= static_pointer_cast<GUIComponent>(mGameOverLabel);
 	mGameDisplay->GetContainer()->AddComponent(game_over_component, GLVector2f(0.5f, 0.5f));
 
+	// Create a new GUILabel and wrap it up in a shared_ptr
+	mStartScreenLabel = shared_ptr<GUILabel>(new GUILabel("Press P to start"));
+	// Set the horizontal alignment of the label to GUI_HALIGN_CENTER
+	mStartScreenLabel->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
+	// Set the vertical alignment of the label to GUI_VALIGN_MIDDLE
+	mStartScreenLabel->SetVerticalAlignment(GUIComponent::GUI_VALIGN_MIDDLE);
+	// Set the visibility of the label to false (hidden)
+	mStartScreenLabel->SetVisible(true);
+	// Add the GUILabel to the GUIContainer  
+	shared_ptr<GUIComponent> start_screen_component
+		= static_pointer_cast<GUIComponent>(mStartScreenLabel);
+	mGameDisplay->GetContainer()->AddComponent(start_screen_component, GLVector2f(0.5f, 0.5f));
 }
 
 void Asteroids::OnScoreChanged(int score)
