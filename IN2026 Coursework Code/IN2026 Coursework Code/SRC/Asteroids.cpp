@@ -209,6 +209,23 @@ shared_ptr<GameObject> Asteroids::CreateSpaceship()
 
 }
 
+shared_ptr<GameObject> Asteroids::CreateAISpaceship()
+{
+	mAISpaceship = make_shared<Spaceship>();
+	mAISpaceship->SetBoundingShape(make_shared<BoundingSphere>(mAISpaceship->GetThisPtr(), 4.0f));
+	shared_ptr<Shape> bullet_shape = make_shared<Shape>("bullet.shape");
+	mAISpaceship->SetBulletShape(bullet_shape);
+	Animation* anim_ptr = AnimationManager::GetInstance().GetAnimationByName("spaceship");
+	shared_ptr<Sprite> spaceship_sprite =
+		make_shared<Sprite>(anim_ptr->GetWidth(), anim_ptr->GetHeight(), anim_ptr);
+	mAISpaceship->SetSprite(spaceship_sprite);
+	mAISpaceship->SetScale(0.1f);
+	// Reset spaceship back to centre of the world
+	mAISpaceship->Reset();
+	// Return the spaceship so it can be added to the world
+	return mAISpaceship;
+}
+
 void Asteroids::CreateAsteroids(const uint num_asteroids)
 {
 	mAsteroidCount = num_asteroids;

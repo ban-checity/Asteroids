@@ -49,6 +49,7 @@ public:
 
 private:
 	shared_ptr<Spaceship> mSpaceship;
+	shared_ptr<Spaceship> mAISpaceship;
 	shared_ptr<GUILabel> mGameTitleLabel;
 	shared_ptr<GUILabel> mScoreLabel;
 	shared_ptr<GUILabel> mHighScoreLabel;
@@ -61,6 +62,7 @@ private:
 
 	void ResetSpaceship();
 	shared_ptr<GameObject> CreateSpaceship();
+	shared_ptr<GameObject> CreateAISpaceship();
 	void CreateGUI();
 	void CreateAsteroids(const uint num_asteroids);
 	shared_ptr<GameObject> CreateExplosion();
