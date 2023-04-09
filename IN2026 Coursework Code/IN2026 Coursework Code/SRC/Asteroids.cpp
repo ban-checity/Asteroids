@@ -61,8 +61,6 @@ void Asteroids::Start()
 	//Create the GUI
 	CreateGUI();
 
-	mGameWorld->AddObject(CreateAISpaceship());
-
 	// Hide GUI elements for start screen
 	mLivesLabel->SetVisible(false);
 	mScoreLabel->SetVisible(false);

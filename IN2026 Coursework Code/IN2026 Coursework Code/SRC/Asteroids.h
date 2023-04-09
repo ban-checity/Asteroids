@@ -61,7 +61,6 @@ private:
 
 	void ResetSpaceship();
 	shared_ptr<GameObject> CreateSpaceship();
-	shared_ptr<GameObject> CreateAISpaceship();
 	void CreateGUI();
 	void CreateAsteroids(const uint num_asteroids);
 	shared_ptr<GameObject> CreateExplosion();
